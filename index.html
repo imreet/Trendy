@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trendy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --background-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --light-gray: #e0e0e0;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .app-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .app-header {
+            padding: 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+        }
+
+        .app-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Search Box */
+        .search-container {
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 30px;
+            padding: 8px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-box i {
+            color: #999;
+            margin-right: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 12px 0;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+        }
+
+        .search-box input::placeholder {
+            color: #aaa;
+        }
+
+        /* App Content */
+        .app-content {
+            padding: 30px;
+        }
+
+        #trend-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        #trend-info p {
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+
+        .trend-score {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Chart Section */
+        .chart-section {
+            margin-top: 30px;
+        }
+
+        .chart-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+
+        .chart-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            height: 250px;
+            position: relative;
+        }
+
+        .timestamp {
+            text-align: right;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding-right: 10px;
+        }
+
+        /* Trending Words */
+        .trending-section {
+            margin-bottom: 30px;
+        }
+
+        .trending-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+
+        #trending-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .trending-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .trending-word {
+            background-color: #e8f0fe;
+            color: #2c3e50;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .trending-word:hover {
+            background-color: #4a90e2;
+            color: white;
+            transform: translateY(-2px);
+            cursor: pointer;
+        }
+
+        #trending-list li {
+            background-color: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #trending-list li .upvotes {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        #trending-list li a {
+            flex: 1;
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        #trending-list li a:hover {
+            text-decoration: underline;
+        }
+
+        #trending-list li .subreddit {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .app-container {
+                width: 95%;
+                margin: 15px auto;
+            }
+            
+            .app-header, .app-content {
+                padding: 20px;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+            
+            #trending-list li {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            #trending-list li .subreddit {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+        .five-year-chart {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>TREND ANALYZER</h1>
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="word-input" placeholder="Search trends..." oninput="checkTrendiness()">
+                </div>
+            </div>
+        </header>
+
+        <main class="app-content">
+            <div id="trend-info">
+                <p><strong>Trendiness:</strong> <span id="trend-score" class="trend-score">Enter a word to analyze</span></p>
+                <p><strong>Platforms:</strong> <span id="platforms">-</span></p>
+            </div>
+
+            <div class="trending-section">
+              <div class="section-title">Trending Now</div>
+              <div class="trending-words">
+                  <div class="trending-word">AI</div>
+                  <div class="trending-word">Elections</div>
+                  <div class="trending-word">Bitcoin</div>
+                  <div class="trending-word">Climate</div>
+                  <div class="trending-word">Streaming</div>
+                  <div class="trending-word">VR</div>
+                  <div class="trending-word">SpaceX</div>
+                  <div class="trending-word">Metaverse</div>
+                  <div class="trending-word">Renewables</div>
+                  <div class="trending-word">Cybersecurity</div>
+                  <div class="trending-word">NFTs</div>
+                  <div class="trending-word">5G</div>
+              </div>
+            </div>
+
+            <section class="trending-section">
+                <h3>Current Trending Words</h3>
+                <ul id="trending-list">
+                    <li>No trending words yet. Search for a term to see results.</li>
+                </ul>
+            </section>
+
+            <section class="chart-section">
+                <h3>Trendiness Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div class="timestamp">
+                    <span id="current-time"></span>
+                </div>
+            </section>
+
+            <section class="chart-section five-year-chart">
+              <h3>5-Year Trend History</h3>
+              <div class="chart-container">
+                  <canvas id="fiveYearChart"></canvas>
+              </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize with current time
+        document.getElementById('current-time').textContent = new Date().toLocaleString();
+        
+        // Your existing JavaScript code here
+        let trendChart; // Store the Chart.js instance
+        let trendData = {
+            labels: [], // Time (Year/Month/Day)
+            datasets: [{
+                label: "Trendiness Score",
+                data: [], // Trendiness score values
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        // Function to fetch real-time trendiness score (simulate API call)
+        function fetchRealTimeData() {
+            // Replace with actual API call logic to fetch data
+            const currentTime = new Date().toLocaleTimeString(); // Simulated time (you can replace it with date)
+            const randomTrendScore = Math.floor(Math.random() * 100); // Simulated data for demo purposes
+
+            // Update trendData with new data
+            trendData.labels.push(currentTime);
+            trendData.datasets[0].data.push(randomTrendScore);
+
+            if (trendData.labels.length > 10) {
+                trendData.labels.shift(); // Keep the last 10 entries
+                trendData.datasets[0].data.shift(); // Remove the oldest data
+            }
+
+            // Update chart with the new data
+            updateChart(trendData);
+        }
+
+        // Function to update the chart with new data
+        function updateChart(data) {
+            const ctx = document.getElementById("trendChart").getContext("2d");
+
+            if (trendChart) {
+                trendChart.data = data; // Update the data in the existing chart
+                trendChart.update(); // Update the existing chart with the new data
+            } else {
+                // Create the chart if it doesn't exist yet
+                trendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Time'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Trendiness Score'
+                                },
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Function to start real-time chart updates
+        function startRealTimeChart() {
+            // Fetch data every 10 seconds (3000 milliseconds)
+            setInterval(fetchRealTimeData, 3000);
+        }
+
+        // Start the real-time chart updates
+        startRealTimeChart();
+
+        // Function to check trendiness of a word across Reddit
+        function checkTrendiness() {
+            const wordInput = document.getElementById("word-input").value.trim().toLowerCase();
+            const trendScoreEl = document.getElementById("trend-score");
+            const platformsEl = document.getElementById("platforms");
+
+            if (!wordInput) {
+                trendScoreEl.innerText = "Please enter a word/phrase";
+                platformsEl.innerText = "N/A";
+                return;
+            }
+
+            trendScoreEl.innerText = "Analyzing...";
+            platformsEl.innerText = "Checking...";
+
+            // Search Reddit for the term
+            fetch(`https://www.reddit.com/search.json?q=${encodeURIComponent(wordInput)}&limit=5`)
+                .then(response => response.json())
+                .then(data => {
+                    const posts = data.data.children;
+                    const score = calculateTrendScore(posts);
+                    const activeSubreddits = [...new Set(posts.map(p => p.data.subreddit))];
+
+                    trendScoreEl.innerText = `${score}%`;
+                    platformsEl.innerText = activeSubreddits.join(', ');
+
+                    // Update trending words list
+                    updateTrendingWords(posts);
+                })
+                .catch(error => {
+                    console.error("Search failed:", error);
+                    trendScoreEl.innerText = "Error";
+                    platformsEl.innerText = "API failed";
+                });
+
+            // Simulating data for the trend chart (replace with actual data if possible)
+            fetchTrendData(wordInput);
+        }
+
+        // Simulate Trend Data for Chart
+        function fetchTrendData(word) {
+            // Simulated data for trend analysis (Replace with actual API data)
+            const trendData = {
+                labels: ["2023", "2022", "2021"], // Years
+                datasets: [{
+                    label: `Trendiness of "${word}"`,
+                    data: [80, 60, 75], // Example trend scores
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            // Update chart with the fetched data
+            updateChart(trendData);
+        }
+
+        let fiveYearChart;
+        
+        function initializeFiveYearChart() {
+            const ctx = document.getElementById('fiveYearChart').getContext('2d');
+            
+            // Sample data for 5 years (replace with actual data)
+            const currentYear = new Date().getFullYear();
+            const years = Array.from({length: 5}, (_, i) => currentYear - i).reverse();
+            const values = years.map(year => Math.floor(Math.random() * 60) + 40); // Random values between 40-100
+            
+            fiveYearChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Yearly Trend Score',
+                        data: values,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Trend Score'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Modify the fetchTrendData function to update both charts
+        function fetchTrendData(word) {
+            // Update the main trend chart (existing code)
+            const trendData = {
+                labels: ["2023", "2022", "2021"],
+                datasets: [{
+                    label: `Trendiness of "${word}"`,
+                    data: [80, 60, 75],
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+            updateChart(trendData);
+            
+            // Update the 5-year chart with new data
+            const currentYear = new Date().getFullYear();
+            const years = Array.from({length: 5}, (_, i) => currentYear - i).reverse();
+            const fiveYearData = {
+                labels: years,
+                datasets: [{
+                    label: `5-Year Trend for "${word}"`,
+                    data: years.map(year => {
+                        // Generate more realistic trend data that builds up to current year
+                        const base = year === currentYear ? 70 : 30 + (year - (currentYear - 4)) * 10;
+                        return Math.floor(base + (Math.random() * 20 - 10));
+                    }),
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            };
+            
+            if (fiveYearChart) {
+                fiveYearChart.data = fiveYearData;
+                fiveYearChart.update();
+            }
+        }
+        
+        // Initialize both charts when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-time').textContent = new Date().toLocaleString();
+            startRealTimeChart();
+            initializeFiveYearChart();
+        });
+
+        // Calculate Trendiness Score
+        function calculateTrendScore(posts) {
+            if (!posts.length) return 0;
+
+            const totalUpvotes = posts.reduce((sum, post) => sum + post.data.ups, 0);
+            const avgUpvotes = totalUpvotes / posts.length;
+
+            return Math.min(100, Math.round(avgUpvotes / 1000 * 100));
+        }
+
+        // Update Trending Words List
+        function updateTrendingWords(posts) {
+            const trendingList = document.getElementById("trending-list");
+            trendingList.innerHTML = "";
+
+            if (!posts || !posts.length) {
+                trendingList.innerHTML = `<li>No trending topics found</li>`;
+                return;
+            }
+
+            posts.forEach(post => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span class="upvotes">▲ ${post.data.ups}</span>
+                    <a href="https://reddit.com${post.data.permalink}" target="_blank">
+                        ${post.data.title}
+                    </a>
+                    <span class="subreddit">r/${post.data.subreddit}</span>
+                `;
+                trendingList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
